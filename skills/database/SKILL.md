@@ -30,15 +30,21 @@ description: Documentation of the Supabase SQL schema, triggers, and RLS policie
 - **`tags`**: Categories like "Baking" or "Italian".
   - `id` (UUID, PK), `name` (Text), `category` (Text)
 - **`recipe_tags`**: Many-to-Many junction table.
+- **`favorites`**: Users' saved recipes.
+  - `user_id` (UUID, PK, FK to auth.users)
+  - `recipe_id` (UUID, PK, FK to recipes)
+  - `created_at` (Timestamp)
 
 ## Automation & Triggers
 - **`handle_new_user()`**: A trigger on `auth.users` that automatically creates a record in `public.profiles` upon signup, using the email or provided display name.
 
 ## Security (RLS)
 - **Read Access**: All tables (`profiles`, `recipes`, `ingredients`, `instructions`, `tags`, `recipe_tags`) have `FOR SELECT` policies allowing public read access (`USING (true)`).
+- **Favorites**: Users can only manage their own favorites (`auth.uid() = user_id`).
 - **Write Access**: 
   - `recipes`: Users can only `INSERT`, `UPDATE`, or `DELETE` recipes where `created_by` matches their `auth.uid()`.
   - `ingredients`/`instructions`: Users can manage these records ONLY if they own the parent recipe (verified via `EXISTS` check on the `recipes` table).
+  - `tags`: Users can `INSERT` and `UPDATE` tags if authenticated.
 
 ## Storage (Buckets)
 - **`recipe-images`**: Public bucket for storing recipe photos.

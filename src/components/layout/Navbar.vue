@@ -28,8 +28,7 @@ const handleSignOut = async () => {
   <nav class="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center gap-2 cursor-pointer" @click="navigate('/')">
-          <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold">C</div>
+        <div class="flex items-center cursor-pointer" @click="navigate('/')">
           <span class="text-xl font-bold tracking-tight">CookBook'd</span>
         </div>
 

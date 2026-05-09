@@ -131,6 +131,12 @@
     scrollbar-gutter: stable;
     overflow-y: scroll;
   }
+  
+  /* Prevent modal libraries from adding extra padding when scrollbar-gutter is stable */
+  body[style*="padding-right"] {
+    padding-right: 0px !important;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

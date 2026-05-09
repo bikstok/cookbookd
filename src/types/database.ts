@@ -64,4 +64,5 @@ export interface RecipeSummary {
   created_by_name: string
   tags: string[]
   ingredient_names: string[]
+  is_favorite?: boolean
 }

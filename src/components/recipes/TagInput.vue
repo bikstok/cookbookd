@@ -119,7 +119,7 @@ const showCreateOption = computed(() => {
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-[300px] p-0" align="start">
-        <Command :filter-function="(list, term) => list.filter(i => i.toLowerCase().includes(term.toLowerCase()))">
+        <Command :filter-function="(list: string[], term: string) => list.filter(i => i.toLowerCase().includes(term.toLowerCase()))">
           <CommandInput placeholder="Search tags..." v-model="searchTerm" />
           <CommandList>
             <div v-if="isLoading" class="p-4 flex justify-center">

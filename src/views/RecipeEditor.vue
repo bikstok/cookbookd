@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, useTemplateRef } from 'vue'
+import { ref, onMounted, onUnmounted, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabaseClient'
 import { useAuth } from '@/composables/useAuth'
@@ -37,8 +37,27 @@ const imageFile = ref<File | null>(null)
 const imagePreview = ref<string | null>(null)
 const isSaving = ref(false)
 
+const handleGlobalPaste = (e: ClipboardEvent) => {
+  const items = e.clipboardData?.items
+  if (!items) return
+
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf('image') !== -1) {
+      const file = items[i].getAsFile()
+      if (file) {
+        imageFile.value = file
+        imagePreview.value = URL.createObjectURL(file)
+        console.log('Image pasted from clipboard!')
+        break
+      }
+    }
+  }
+}
+
 // Load existing recipe if editing
 onMounted(async () => {
+  window.addEventListener('paste', handleGlobalPaste)
+  
   if (props.id) {
     const { data, error: fetchError } = await supabase
       .from('recipes')
@@ -78,6 +97,10 @@ onMounted(async () => {
       }
     }
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('paste', handleGlobalPaste)
 })
 
 // Handlers
@@ -216,7 +239,6 @@ const handleSave = async () => {
     
     await Promise.all(insertOps)
 
-    alert('Recipe saved successfully!')
     router.push(`/recipe/${recipeId}`)
   } catch (err: any) {
     alert(err.message || 'Error saving recipe')

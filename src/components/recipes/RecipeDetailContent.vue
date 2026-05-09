@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 import type { FullRecipe } from '@/composables/useRecipeDetail'
-import { Clock, ChefHat, Minus, Plus, Utensils } from 'lucide-vue-next'
+import { Clock, ChefHat, Minus, Plus, Utensils, Pencil } from 'lucide-vue-next'
+import { Button } from '@/components/ui/button'
 
 const props = defineProps<{
   recipe: FullRecipe
 }>()
+
+const router = useRouter()
+const { user } = useAuth()
 
 // Serving Scaler Logic
 const targetServings = ref(1)
@@ -60,7 +66,18 @@ const scaleAmount = (amount: number | null, baseServings: number) => {
 
       <!-- Header Info -->
       <div class="space-y-4">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">{{ recipe.title }}</h1>
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <h1 class="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">{{ recipe.title }}</h1>
+          
+          <Button 
+            v-if="user && user.id === recipe.created_by" 
+            variant="outline" 
+            @click="router.push(`/edit/${recipe.id}`)"
+            class="shrink-0 bg-white shadow-sm border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-900"
+          >
+            <Pencil class="h-4 w-4 mr-2" /> Edit Recipe
+          </Button>
+        </div>
         
         <div class="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground border-b border-border pb-6">
           <div class="flex items-center gap-2">

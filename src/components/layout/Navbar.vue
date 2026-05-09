@@ -57,27 +57,28 @@ const handleSignOut = async () => {
             </button>
 
             <div v-if="user" class="flex items-center gap-4">
-            <span class="text-sm font-semibold text-orange-900/60">
-              Hi, {{ user.user_metadata.display_name || user.email?.split('@')[0] }}
-            </span>
+              <span class="text-sm font-semibold text-orange-900/60">
+                Hi, {{ user.user_metadata.display_name || user.email?.split('@')[0] }}
+              </span>
+              <Button 
+                variant="outline"
+                size="sm"
+                @click="handleSignOut"
+                class="rounded-full px-6 border-primary/20 hover:bg-primary/10"
+              >
+                Log Out
+              </Button>
+            </div>
             <Button 
-              variant="outline"
+              v-else
+              variant="default"
               size="sm"
-              @click="handleSignOut"
-              class="rounded-full px-6 border-primary/20 hover:bg-primary/10"
+              @click="navigate('/login')"
+              class="rounded-full px-6"
             >
-              Log Out
+              Sign In
             </Button>
           </div>
-          <Button 
-            v-else
-            variant="default"
-            size="sm"
-            @click="navigate('/login')"
-            class="rounded-full px-6"
-          >
-            Sign In
-          </Button>
         </div>
 
         <!-- Mobile Menu Button -->

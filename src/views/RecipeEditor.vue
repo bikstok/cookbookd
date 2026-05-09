@@ -12,6 +12,16 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Plus, Trash2, Utensils, Clock, Users, Camera, Save } from 'lucide-vue-next'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from '@/components/ui/dialog'
 
 const props = defineProps<{
   id?: string
@@ -126,6 +136,21 @@ const addInstruction = () => {
 
 const removeInstruction = (index: number) => {
   instructions.value.splice(index, 1)
+}
+
+const handleDelete = async () => {
+  if (!props.id) return
+  
+  isSaving.value = true
+  try {
+    const { error } = await supabase.from('recipes').delete().eq('id', props.id)
+    if (error) throw error
+    router.push('/')
+  } catch (err: any) {
+    alert('Failed to delete recipe: ' + err.message)
+  } finally {
+    isSaving.value = false
+  }
 }
 
 const handleSave = async () => {
@@ -258,16 +283,49 @@ const handleSave = async () => {
           </h1>
           <p class="text-muted-foreground text-lg">Add your culinary masterpiece to our shared catalog.</p>
         </div>
-        <Button 
-          size="lg" 
-          @click="handleSave" 
-          :disabled="isSaving || isUploading"
-          class="rounded-full px-8 shadow-lg shadow-primary/20"
-        >
-          <Save v-if="!isSaving" class="mr-2 h-5 w-5" />
-          <span v-else class="mr-2 animate-spin">⏳</span>
-          {{ isSaving ? 'Saving...' : 'Save Recipe' }}
-        </Button>
+        <div class="flex flex-wrap gap-3">
+          <Dialog v-if="id">
+            <DialogTrigger as-child>
+              <Button 
+                variant="destructive"
+                size="lg"
+                :disabled="isSaving || isUploading"
+                class="rounded-full px-8 shadow-lg shadow-destructive/20"
+              >
+                <Trash2 class="mr-2 h-5 w-5" />
+                Delete Recipe
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete your recipe
+                  and remove it from our servers.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose as-child>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button variant="destructive" @click="handleDelete" :disabled="isSaving">
+                  <Trash2 class="mr-2 h-4 w-4" /> Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Button 
+            size="lg" 
+            @click="handleSave" 
+            :disabled="isSaving || isUploading"
+            class="rounded-full px-8 shadow-lg shadow-primary/20"
+          >
+            <Save v-if="!isSaving" class="mr-2 h-5 w-5" />
+            <span v-else class="mr-2 animate-spin">⏳</span>
+            {{ isSaving ? 'Saving...' : 'Save Recipe' }}
+          </Button>
+        </div>
       </header>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">

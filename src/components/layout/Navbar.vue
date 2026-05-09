@@ -3,9 +3,12 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/composables/useAuth'
+import { useTheme } from '@/composables/useTheme'
+import { Sun, Moon } from 'lucide-vue-next'
 
 const router = useRouter()
 const { user, signOut } = useAuth()
+const { isDark, toggleTheme } = useTheme()
 const isMenuOpen = ref(false)
 
 const navItems = [
@@ -43,7 +46,17 @@ const handleSignOut = async () => {
             {{ item.name }}
           </button>
           
-          <div v-if="user" class="flex items-center gap-4">
+          <div class="flex items-center gap-4">
+            <button 
+              @click="toggleTheme" 
+              class="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-accent"
+              aria-label="Toggle theme"
+            >
+              <Sun v-if="isDark" class="h-5 w-5" />
+              <Moon v-else class="h-5 w-5" />
+            </button>
+
+            <div v-if="user" class="flex items-center gap-4">
             <span class="text-sm font-semibold text-orange-900/60">
               Hi, {{ user.user_metadata.display_name || user.email?.split('@')[0] }}
             </span>
@@ -83,6 +96,18 @@ const handleSignOut = async () => {
 
     <!-- Mobile Menu -->
     <div v-if="isMenuOpen" class="sm:hidden bg-background border-b border-border px-4 py-4 space-y-2">
+      <div class="flex items-center justify-between px-4 py-2 border-b border-border mb-2">
+        <span class="text-sm font-medium text-muted-foreground tracking-tight">Theme</span>
+        <button 
+          @click="toggleTheme" 
+          class="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-full bg-accent/50"
+          aria-label="Toggle theme"
+        >
+          <Sun v-if="isDark" class="h-5 w-5" />
+          <Moon v-else class="h-5 w-5" />
+        </button>
+      </div>
+
       <button 
         v-for="item in navItems" 
         :key="item.path"

@@ -14,7 +14,7 @@ import Navbar from './Navbar.vue'
     <!-- Footer -->
     <footer class="mt-auto py-12 border-t border-border bg-muted/30">
       <div class="max-w-7xl mx-auto px-4 text-center">
-        <p class="text-sm text-muted-foreground">© 2026 CookBook'd. Made with ❤️ for good food.</p>
+        <p class="text-sm text-muted-foreground">© CookBook'd - Jakob Kjærulff</p>
       </div>
     </footer>
   </div>

@@ -369,22 +369,34 @@ const handleSave = async () => {
                 Import from Gemini
               </Button>
             </DialogTrigger>
-            <DialogContent class="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Smart Recipe Import</DialogTitle>
+            <DialogContent class="sm:max-w-[600px] max-h-[90vh] flex flex-col overflow-hidden">
+              <DialogHeader class="shrink-0">
+                <div class="flex items-center justify-between">
+                  <DialogTitle>Smart Recipe Import</DialogTitle>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    @click="copyPrompt"
+                    class="h-8 text-xs font-bold text-primary hover:text-primary hover:bg-primary/5"
+                  >
+                    Copy Prompt
+                  </Button>
+                </div>
                 <DialogDescription>
                   Paste the JSON block provided by Gemini below to instantly fill out the form.
                 </DialogDescription>
               </DialogHeader>
-              <div class="py-4">
+              
+              <div class="flex-1 overflow-y-auto py-4 min-h-[300px]">
                 <Textarea 
                   v-model="importJson" 
                   placeholder='{"title": "..."}' 
-                  class="min-h-[200px] font-mono text-xs"
+                  class="min-h-[400px] font-mono text-xs resize-none"
                 />
               </div>
-              <DialogFooter>
-                <Button @click="handleImportJSON">Import Recipe</Button>
+
+              <DialogFooter class="shrink-0 pt-4 border-t">
+                <Button @click="handleImportJSON" class="w-full sm:w-auto">Import Recipe</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

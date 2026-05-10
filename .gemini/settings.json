@@ -1,6 +1,10 @@
 {
-  "context": [
-    "AGENTS.md",
-    "skills/"
-  ]
+  "context": {
+    "fileName": [
+      "AGENTS.md"
+    ],
+    "includeDirectories": [
+      "skills/"
+    ]
+  }
 }

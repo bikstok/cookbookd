@@ -29,7 +29,7 @@ const props = defineProps<{
 
 const router = useRouter()
 const { user } = useAuth()
-const { uploadRecipeImage, isUploading } = useImageUpload()
+const { uploadRecipeImage, isUploading, deleteRecipeImage } = useImageUpload()
 const fileInputRef = useTemplateRef<HTMLInputElement>('fileInput')
 
 // Form State
@@ -45,6 +45,7 @@ const instructions = ref<string[]>([''])
 const selectedTags = ref<string[]>([]) // Array of tag names
 const imageFile = ref<File | null>(null)
 const imagePreview = ref<string | null>(null)
+const originalImageUrl = ref<string | null>(null)
 const isSaving = ref(false)
 const importJson = ref('')
 const isImportDialogOpen = ref(false)
@@ -160,6 +161,7 @@ onMounted(async () => {
       cookTime.value = data.cook_time || ''
       servings.value = data.servings
       imagePreview.value = data.image_url
+      originalImageUrl.value = data.image_url
       
       if (data.ingredients?.length) {
         ingredients.value = data.ingredients.map((i: any) => ({
@@ -216,6 +218,9 @@ const handleDelete = async () => {
   
   isSaving.value = true
   try {
+    if (originalImageUrl.value) {
+      await deleteRecipeImage(originalImageUrl.value)
+    }
     const { error } = await supabase.from('recipes').delete().eq('id', props.id)
     if (error) throw error
     router.push('/')
@@ -259,6 +264,11 @@ const handleSave = async () => {
       
       finalImageUrl = uploadedUrl
       console.log('Image uploaded successfully:', finalImageUrl)
+
+      // 1.1 Delete old image ONLY if we just uploaded a new one and an old one existed
+      if (originalImageUrl.value && originalImageUrl.value !== finalImageUrl) {
+        await deleteRecipeImage(originalImageUrl.value)
+      }
     }
 
     // 2. Upsert Recipe

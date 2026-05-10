@@ -25,7 +25,7 @@ onMounted(() => {
       <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div class="max-w-2xl">
           <h1 class="text-4xl font-extrabold text-foreground tracking-tight mb-2">Our Recipes</h1>
-          <p class="text-muted-foreground text-lg italic">The shared culinary journal of Julie & Casper.</p>
+          <p class="text-muted-foreground text-lg italic">The shared culinary journal of Jakob & Trine.</p>
         </div>
 
         <!-- Search Bar -->

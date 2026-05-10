@@ -57,7 +57,7 @@ const scaleAmount = (amount: number | null, baseServings: number) => {
           <span 
             v-for="tag in recipe.tags" 
             :key="tag.id"
-            class="px-3 py-1 bg-white/90 backdrop-blur text-primary text-xs font-bold uppercase tracking-wider rounded-md shadow-sm"
+            class="px-3 py-1 bg-white/90 backdrop-blur text-[#c05621] text-xs font-bold uppercase tracking-wider rounded-md shadow-sm"
           >
             {{ tag.name }}
           </span>

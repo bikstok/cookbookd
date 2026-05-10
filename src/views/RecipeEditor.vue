@@ -49,6 +49,33 @@ const isSaving = ref(false)
 const importJson = ref('')
 const isImportDialogOpen = ref(false)
 
+const copyPrompt = async () => {
+  const prompt = `Jakob & Trine's CookBook'd Instructions: Whenever I ask for a recipe, provide the text first, but always include this JSON block at the very end so I can import it. Make sure the 'tags' array contains relevant categories like 'Baking', 'Dinner', 'Italian', etc.:
+
+{
+  "title": "Recipe Name",
+  "description": "Short summary",
+  "prep_time": 15,
+  "cook_time": 30,
+  "servings": 4,
+  "ingredients": [
+    {"amount": 200, "unit": "g", "name": "Flour"}
+  ],
+  "instructions": [
+    "Step 1...",
+    "Step 2..."
+  ],
+  "tags": ["Tag1", "Tag2"]
+}`
+  
+  try {
+    await navigator.clipboard.writeText(prompt)
+    alert('Prompt copied to clipboard! You can now paste this to Gemini.')
+  } catch (err) {
+    console.error('Failed to copy:', err)
+  }
+}
+
 const handleImportJSON = () => {
   try {
     let rawText = importJson.value.trim()

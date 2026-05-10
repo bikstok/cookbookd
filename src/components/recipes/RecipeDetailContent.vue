@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { useWakeLock } from '@vueuse/core'
 import type { FullRecipe } from '@/composables/useRecipeDetail'
-import { Clock, ChefHat, Minus, Plus, Utensils, Pencil } from 'lucide-vue-next'
+import { Clock, ChefHat, Minus, Plus, Utensils, Pencil, Sun } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 
 const props = defineProps<{
@@ -12,6 +13,20 @@ const props = defineProps<{
 
 const router = useRouter()
 const { user } = useAuth()
+const { isSupported, isActive, request, release } = useWakeLock()
+
+// Automatically request wake lock on mount if supported
+onMounted(() => {
+  if (isSupported.value) {
+    request()
+  }
+})
+
+onUnmounted(() => {
+  if (isActive.value) {
+    release()
+  }
+})
 
 // Serving Scaler Logic
 const targetServings = ref(1)
@@ -93,6 +108,10 @@ const scaleAmount = (amount: number | null, baseServings: number) => {
           <div class="flex items-center gap-2">
             <Utensils class="h-4 w-4 text-orange-400" />
             <span>Cook: {{ recipe.cook_time || '--' }} min</span>
+          </div>
+          <div v-if="isActive" class="flex items-center gap-2 text-primary animate-pulse">
+            <Sun class="h-4 w-4" />
+            <span class="text-xs uppercase tracking-tighter font-bold">Stay Awake Active</span>
           </div>
         </div>
 

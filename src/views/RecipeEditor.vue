@@ -46,6 +46,52 @@ const selectedTags = ref<string[]>([]) // Array of tag names
 const imageFile = ref<File | null>(null)
 const imagePreview = ref<string | null>(null)
 const isSaving = ref(false)
+const importJson = ref('')
+const isImportDialogOpen = ref(false)
+
+const handleImportJSON = () => {
+  try {
+    let rawText = importJson.value.trim()
+    
+    // Support markdown code blocks (e.g. ```json ... ```)
+    const jsonMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)\s*```/)
+    if (jsonMatch) {
+      rawText = jsonMatch[1]
+    }
+
+    const data = JSON.parse(rawText)
+
+    // Map to form state
+    if (data.title) title.value = data.title
+    if (data.description) description.value = data.description
+    if (data.prep_time) prepTime.value = data.prep_time
+    if (data.cook_time) cookTime.value = data.cook_time
+    if (data.servings) servings.value = data.servings
+    
+    if (Array.isArray(data.ingredients)) {
+      ingredients.value = data.ingredients.map((i: any) => ({
+        amount: i.amount || '',
+        unit: i.unit || '',
+        name: i.name || ''
+      }))
+    }
+
+    if (Array.isArray(data.instructions)) {
+      instructions.value = data.instructions.map((i: any) => typeof i === 'string' ? i : i.description)
+    }
+
+    if (Array.isArray(data.tags)) {
+      selectedTags.value = data.tags
+    }
+
+    // Reset and Close
+    importJson.value = ''
+    isImportDialogOpen.value = false
+    alert('Recipe imported successfully!')
+  } catch (err: any) {
+    alert('Failed to parse JSON. Please check the format. Error: ' + err.message)
+  }
+}
 
 const handleGlobalPaste = (e: ClipboardEvent) => {
   const items = e.clipboardData?.items
@@ -284,6 +330,38 @@ const handleSave = async () => {
           <p class="text-muted-foreground text-lg">Add your culinary masterpiece to our shared catalog.</p>
         </div>
         <div class="flex flex-wrap gap-3">
+          <!-- Gemini Import Dialog -->
+          <Dialog v-model:open="isImportDialogOpen">
+            <DialogTrigger as-child>
+              <Button 
+                variant="outline"
+                size="lg"
+                class="rounded-full px-6 border-primary/20 text-primary hover:bg-primary/5"
+              >
+                <Plus class="mr-2 h-5 w-5" />
+                Import from Gemini
+              </Button>
+            </DialogTrigger>
+            <DialogContent class="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Smart Recipe Import</DialogTitle>
+                <DialogDescription>
+                  Paste the JSON block provided by Gemini below to instantly fill out the form.
+                </DialogDescription>
+              </DialogHeader>
+              <div class="py-4">
+                <Textarea 
+                  v-model="importJson" 
+                  placeholder='{"title": "..."}' 
+                  class="min-h-[200px] font-mono text-xs"
+                />
+              </div>
+              <DialogFooter>
+                <Button @click="handleImportJSON">Import Recipe</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           <Dialog v-if="id">
             <DialogTrigger as-child>
               <Button 

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabaseClient'
 import { useAuth } from '@/composables/useAuth'
 import { useImageUpload } from '@/composables/useImageUpload'
+import { toast } from 'vue-sonner'
 import TagInput from '../components/recipes/TagInput.vue'
 import AppLayout from '../components/layout/AppLayout.vue'
 import { Button } from '@/components/ui/button'
@@ -71,7 +72,7 @@ const copyPrompt = async () => {
   
   try {
     await navigator.clipboard.writeText(prompt)
-    alert('Prompt copied to clipboard! You can now paste this to Gemini.')
+    toast.success('Prompt copied to clipboard! You can now paste this to Gemini.')
   } catch (err) {
     console.error('Failed to copy:', err)
   }
@@ -115,9 +116,9 @@ const handleImportJSON = () => {
     // Reset and Close
     importJson.value = ''
     isImportDialogOpen.value = false
-    alert('Recipe imported successfully!')
+    toast.success('Recipe imported successfully!')
   } catch (err: any) {
-    alert('Failed to parse JSON. Please check the format. Error: ' + err.message)
+    toast.error('Failed to parse JSON. Please check the format. Error: ' + err.message)
   }
 }
 
@@ -225,7 +226,7 @@ const handleDelete = async () => {
     if (error) throw error
     router.push('/')
   } catch (err: any) {
-    alert('Failed to delete recipe: ' + err.message)
+    toast.error('Failed to delete recipe: ' + err.message)
   } finally {
     isSaving.value = false
   }
@@ -233,18 +234,18 @@ const handleDelete = async () => {
 
 const handleSave = async () => {
   if (!user.value) {
-    alert('You must be logged in to save a recipe.')
+    toast.error('You must be logged in to save a recipe.')
     return
   }
 
   // VALIDATION
   if (!title.value.trim()) {
-    alert('Please enter a Recipe Title.')
+    toast.error('Please enter a Recipe Title.')
     return
   }
 
   if (selectedTags.value.length === 0) {
-    alert('Please select at least one Tag.')
+    toast.error('Please select at least one Tag.')
     return
   }
 
@@ -349,7 +350,7 @@ const handleSave = async () => {
 
     router.push(`/recipe/${recipeId}`)
   } catch (err: any) {
-    alert(err.message || 'Error saving recipe')
+    toast.error(err.message || 'Error saving recipe')
   } finally {
     isSaving.value = false
   }

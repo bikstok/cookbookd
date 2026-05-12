@@ -18,7 +18,7 @@ const { isSupported, isActive, request, release } = useWakeLock()
 // Automatically request wake lock on mount if supported
 onMounted(() => {
   if (isSupported.value) {
-    request()
+    request('screen')
   }
 })
 
